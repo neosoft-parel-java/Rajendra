@@ -23,6 +23,6 @@ public class UserSpouse {
     @OneToOne
     private User spouse;
 
-    private LocalDate from;
-    private LocalDate to;
+    private LocalDate marriedFrom;
+    private LocalDate marriedUpto;
 }

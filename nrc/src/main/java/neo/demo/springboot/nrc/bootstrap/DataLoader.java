@@ -50,8 +50,8 @@ public class DataLoader implements CommandLineRunner {
         userSpouse1.setId(3L);
         userSpouse1.setUser(user2);
         userSpouse1.setSpouse(userSpouse);
-        userSpouse1.setFrom(LocalDate.now().minusYears(25));
-        userSpouse1.setTo(LocalDate.now());
+        userSpouse1.setMarriedFrom(LocalDate.now().minusYears(25));
+        userSpouse1.setMarriedUpto(LocalDate.now());
         userSpouseRepository.save(userSpouse1);
 
         User user1 = new User();

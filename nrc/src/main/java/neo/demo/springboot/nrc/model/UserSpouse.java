@@ -11,20 +11,18 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class UserAddress {
+public class UserSpouse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
+    @OneToOne
+    private User spouse;
 
-    private LocalDate livingFrom;
-    private LocalDate lastLivingDate;
+    private LocalDate from;
+    private LocalDate to;
 }

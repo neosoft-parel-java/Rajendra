@@ -28,12 +28,12 @@ public class User {
     @OneToMany
     private List<User> siblings;
 
-    @OneToMany
-    private List<User> spouses;
+    @OneToMany(mappedBy = "user")
+    private List<UserSpouse> spouses;
 
     @OneToMany
     private List<User> children;
 
     @OneToMany(mappedBy = "user")
-    private List<UserAddress> addressList = new ArrayList<>();
+    private List<UserAddress> addressList;
 }

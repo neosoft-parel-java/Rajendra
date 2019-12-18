@@ -16,5 +16,6 @@ public class EmployeeDTO {
     private String buildingName;
     private String area;
     private String city;
+    private String test;
 
 }

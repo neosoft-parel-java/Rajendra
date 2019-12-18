@@ -1,0 +1,56 @@
+========================================JShell===============================================
+
+-- JShell is new command line interactive REPL (Read-Evaluate-Print-Loop)
+console shipped with JDK 9 distribution [JEP 222]
+to evaluate declarations, statements and expressions written in Java.
+JShell allows us to execute Java code snippets and get immediate results
+without having to create a solution or project.
+
+1) Variables:
+--define variables
+    jshell> int i = 10;
+    i ==> 10
+
+--print the value of variable
+    jshell> i
+    i ==> 10
+
+--reassign a variable to new value
+    jshell> i=20;
+    i ==> 20
+
+--list all the declared variables
+    jshell> /vars
+    |    int i = 20
+    |    int j = 30
+
+2)Methods:
+--create method in jshell
+    jshell> int sum (int a, int b) {
+       ...> return a+b;
+       ...> }
+    |  created method sum(int,int)
+
+--list all defined methods
+    jshell> /methods
+    |    int sum(int,int)
+
+--call the method
+    jshell> sum(2,2)
+    $6 ==> 4
+
+--view the method
+    jshell> /list sum
+
+    1 : int sum (int a, int b) {
+       return a+b;
+       }
+
+3) Edit Code in JShell edit pad
+    jshell> /edit sum
+
+4) Launch Code in External Editor
+    jshell> /set editor "C:\\Program Files\\Sublime Text 3\\sublime_text.exe"
+
+5) Load Code from External Java File into REPL
+    jshell> /open c:\\temp\\demo.java

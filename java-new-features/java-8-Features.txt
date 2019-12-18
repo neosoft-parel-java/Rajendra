@@ -1,0 +1,614 @@
+################ Java 8 #######################
+-------------------------------------------------------------------------------------------------
+I) Lambda Expression:
+
+# Lambda expression (or function) is just an anonymous function,
+  i.e., They are nameless functions given as constant values, and written exactly
+	in the place where it’s needed, typically as a parameter to some other function.
+  
+  Syntax : (x, y) -> x + y  //This function takes two parameters and return their sum.
+  Examples: 
+   i) (int a, int b) ->    a * b    // takes two integers and returns their multiplication
+  ii) (a, b) ->   a - b             // takes two numbers and returns their difference
+ iii) () -> 99                      // takes no values and returns 99
+  iv) (String a) -> System.out.println(a) 
+	// takes a string, prints its value to the console, and returns nothing
+   v) a -> 2 * a                    // takes a number and returns the result of doubling it
+  vi) c -> { //some complex statements }  // takes a collection and do some procesing	
+
+  Note:
+- A lambda expression can have zero, one or more parameters.
+- The type of the parameters can be explicitly declared or it can be inferred from the context.
+- Multiple parameters are enclosed in mandatory parentheses and separated by commas.
+- Empty parentheses are used to represent an empty set of parameters.
+- The body of the lambda expressions can contain zero, one or more statements.
+
+-------------------------------------------------------------------------------------------------
+II) Method References:
+
+# Method reference to static method – Class::staticMethodName
+  An example to use Math.max() which is static method.
+ 
+  -> List<Integer> integers = Arrays.asList(1,12,433,5);
+     Optional<Integer> max = integers.stream().reduce( Math::max );
+     max.ifPresent(value -> System.out.println(value));
+     # Above line can also be written as --> max.ifPresent(System.out::println());
+
+# Method reference to instance method from instance – ClassInstance::instanceMethodName
+  -> max.ifPresent( System.out::println );
+
+# Method reference to instance method from class type – Class::instanceMethodName
+         
+  -> List<String> strings = Arrays.asList("how", "to", "do", "in", "java", "dot", "com");
+
+    --> List<String> sorted = strings
+                .stream()
+                .sorted((s1, s2) -> s1.compareTo(s2))
+                .collect(Collectors.toList());
+        System.out.println(sorted);
+
+# Above example shows how sorted() method can be used with lambda expression.
+# Below example shows how sorted() method can be used with Method References.
+
+    --> List<String> sortedAlt = strings
+                .stream()
+                .sorted(String::compareTo)
+                .collect(Collectors.toList());
+        System.out.println(sortedAlt);
+
+#  Reference to constructor – Class::new
+
+   -> List<Integer> integers1 = IntStream
+				.range(1, 100)
+                		.boxed() 
+                		.collect(Collectors.toCollection( ArrayList::new ));
+	# .boxed() it is used to convert Primitive data types,to their respective wrapper classes.
+
+      Optional<Integer> max1 = integers1.stream().reduce(Math::max);
+      max1.ifPresent(System.out::println);
+
+-------------------------------------------------------------------------------------------------
+III) .forEach():
+	
+# Iterating over all elements of a stream and performing an action on it.
+# In this example, we are printing all even numbers
+  -> numberList.stream()
+	.filter(n -> n % 2 == 0)
+	.forEach(System.out.println(System.out::println));
+
+# forEach method using List.
+  -> numberList.forEach(listAction);
+
+# Consumer<T> is an Functional interface, It has only one method - action(T t)
+  -> Consumer<Integer> listAction = System.out::println;
+
+# forEach example using Map.
+  -> HashMap<String, Integer> map = new HashMap<>();
+        map.put("A", 1);
+        map.put("B", 2);
+        map.put("C", 3);
+
+  -> 1) Map entries:
+        .entrySet() - is used to fetch (key, value)
+        --> Consumer<Map.Entry<String, Integer>> mapAction = System.out::println;
+            map.entrySet().forEach(mapAction);
+
+  -> 2) Map keys:
+        .keySet() - is used to fetch keys from map object.
+        --> Consumer<String> mapActionOnKeys = System.out::println;
+            map.keySet().forEach(mapActionOnKeys);
+
+  -> 3) Map values:
+        .values() - is used to fetch values from map object.
+        --> Consumer<Integer> mapActionOnValues = System.out::println;
+            map.values().forEach(mapActionOnValues);
+
+# We can create custom action methods as well to perform our custom logic,
+  for each element in the collection.
+        
+   -> Consumer<Map.Entry<String, Integer>> customAction = entry -> {
+      	System.out.println("Key is: "+ entry.getKey());
+      	System.out.println("Value is: "+ entry.getValue());
+      };
+      map.entrySet().forEach(customAction);
+
+-------------------------------------------------------------------------------------------------
+IV) Functional Interface:
+
+# Functional interfaces are new additions in java 8 which permit exactly one abstract method inside them. 
+  These interfaces are also called Single Abstract Method interfaces (SAM Interfaces).
+# In Java 8, functional interfaces can be represented using lambda expressions, method reference and
+  constructor references as well.
+# Java 8 introduces an annotation i.e. @FunctionalInterface too, which can be used for compiler level errors
+  when the interface you have annotated violates the contracts of exactly one abstract method.
+
+-->  
+# Adding more than one abstract method in Functional Interface is not allowed, it will throw an error.
+   
+  -> @FunctionalInterface
+     interface MyFunctionalInterface {
+	public void standardOperations();
+     	public void moreOperations(); // Having this method will throw error.
+
+
+	# default methods have implementations, so they are not abstract.
+	  So you can add as many as default methods to your functional interface.
+    
+    	default void operation1(){
+        	//Add Operations to perform
+        	System.out.println("Performing Operations 1");
+    	}
+    	default void operation2(){
+        	//Add Operations to perform
+        	System.out.println("Performing Operations 2");
+    	}
+	
+	# If an interface declares an abstract method overriding one of the public methods of
+	  java.lang.Object, that also does not count toward the interface’s abstract method count since any
+          implementation of the interface will have an implementation from java.lang.Object
+
+    	@Override
+    	public String toString(); //Overridden from Object class
+
+	@Override
+    	public boolean equals(Object o); //Overridden from Object class
+     }
+
+-------------------------------------------------------------------------------------------------
+V) Optional Class
+
+#  Optional is a way of replacing a nullable T reference with a non-null value.
+   An Optional may either contain a non-null T reference (in which case we say the reference
+   is “present”), or it may contain nothing (in which case we say the reference is “absent”).
+   Note: It is never said that optional “contain null”.
+
+    ->	Optional<Integer> canBeEmpty1 = Optional.of(5);
+        canBeEmpty1.isPresent(); // returns true
+        canBeEmpty1.get();       // returns 5
+
+        Optional<Integer> canBeEmpty2 = Optional.empty();
+        canBeEmpty2.isPresent(); // returns false
+
+        
+       #Three ways to create an Optional
+        i) use Optional.empty() to create an empty optional.
+  
+        -> Optional<Integer> possible = Optional.empty();
+
+       ii) Use Optional.of() to create optional with default non-null value.
+             If you pass null in of(), then a NullPointerException is thrown immediately.
+
+        -> Optional<Integer> possible1 = Optional.of(5);
+
+      iii) Use Optional.ofNullable() to create an Optional object that may hold a null value.
+              If parameter is null, the resulting Optional object would be empty
+              (remember that value is absent; don’t read it null).
+        
+        -> Optional<Integer> possible2 = Optional.ofNullable(null);
+        	// or
+        -> Optional<Integer> possible3 = Optional.ofNullable(5);
+-------------------------------------------------------------------------------------------------
+VI) Predicate
+
+# Predicate is a functional interface and can therefore be used as the assignment target,
+  for a lambda expression or method reference.
+
+# I will say you can use predicates anywhere where you need to evaluate a condition on group/collection,
+  of similar objects such that evaluation can result either in true or false.
+
+    1) All Employees who are male and age more than 21
+    -> public static Predicate<Employee> isAdultMale() {
+         return p -> p.getAge() > 21 && p.getGender().equalsIgnoreCase("M");
+       }
+    ## For clear idea about this checkout PredicateDemo Package in Java 8 features on github.
+
+-------------------------------------------------------------------------------------------------
+VII) Stream API
+
+# A Stream in Java can be defined as a sequence of elements from a source that supports,
+  aggregate operations on them. The source here refers to a Collections or Arrays,
+  who provides data to a Stream.
+
+# Stream keeps the ordering of the data as it is in the source.
+  The aggregate operations or bulk operations are operations which allow us to express,
+  common manipulations on stream elements easily and clearly.
+
+# *) Filter:
+     Filter accepts a predicate to filter all elements of the stream.
+     This operation is intermediate which enables us to call another stream operation,
+     on the result.
+
+     long count = li.stream()
+                     .filter(s->!(s.length() < 7))
+                     .count();
+
+     System.out.println("Count of Strings !(less) than 7 characters: "+count);
+
+# *) Iterating values using Stream
+
+     Stream.iterate(1, c -> c+1)
+             .filter(no->no%3==0)
+             .limit(5)
+             .forEach(System.out::println);
+
+# *) List Concatenation using Stream
+
+     List<String> lis = Arrays.asList("Pooja","Abhishek","Rohit","Sagar");
+     Stream<String> opstream = Stream.concat(li.stream(),lis.stream());
+     opstream.forEach(System.out::println);
+
+# *) Integer Stream
+
+     int i = IntStream
+             .range(1, 11)
+             //if filter is not used then it will print from 1 to 10.
+             .filter(no -> no%2 == 0)
+             //skip option will skip values by the argument passed.
+             .skip(2)
+             .sum();
+     //.sequential()
+     //.unordered()
+     //.forEach(System.out::print);
+     System.out.println(i);
+
+# *) Stream.of, sorted and findFirst.
+
+     Stream.of("Da","Ba","Aa","Da")
+             .sorted()
+             .findFirst()
+             //.findAny()
+             .ifPresent(System.out::println);
+
+# *) Stream from Array, sort, filter and print
+
+     li.stream()
+             .filter(x -> x.startsWith("S"))
+             .sorted()
+             .forEach((x) -> System.out.println(x));
+
+# *) Average of squares of an int Array
+
+     Arrays.stream(new int[]{2,4,6,8})
+             .map(x-> x*x)
+             .average()
+             .ifPresent(System.out::println);
+
+# *) Stream from List, filter and print
+
+     li
+             .stream()
+             .map(String::toLowerCase)
+             .filter(x -> x.startsWith("a"))
+             .forEach(System.out::println);
+
+# *)  Stream.reduce():
+      This terminal operation performs a reduction on the elements of the stream,
+       with the given function. The result is an Optional holding the reduced value.
+
+     Optional<String> reduced = li.stream()
+             .reduce((s1,s2) -> s1 + "#" + s2);
+
+     reduced.ifPresent(System.out::println);
+
+# *) Reduction - summary
+
+     IntSummaryStatistics summary = IntStream.of(7, 2, 19, 88, 73, 4, 10)
+             .summaryStatistics();
+     System.out.println(summary);
+
+# *) Stream Collectors groupingBy() & counting()
+
+     List< String> names = Arrays.asList("Hello","Welcome","to","Java_8","Hello","Java_8");
+     Map< String, Long> hm = (Map< String, Long>) names.stream()
+             .collect(Collectors.groupingBy(Function.identity(),Collectors.counting()));
+     System.out.println(hm);
+
+# *) Type 1: Convert Stream to List
+
+     List<Integer> list = new ArrayList<Integer>();
+     for(int j = 1; j< 10; j++){
+         list.add(i);
+     }
+     Stream<Integer> stream = list.stream();
+     List<Integer> evenNumbersList = stream
+             .filter(j -> j%2 == 0)
+             .collect(Collectors.toList());
+     System.out.print(evenNumbersList);
+
+# *) Type 2: Convert Stream to array
+
+     List<Integer> list1 = new ArrayList<Integer>();
+     for(int a = 1; a< 10; a++){
+         list1.add(a);
+     }
+     Stream<Integer> stream1 = list.stream();
+     Integer[] evenNumbersArr = stream1.filter(a -> a%2 == 0).toArray(Integer[]::new);
+     System.out.print(evenNumbersArr);
+
+-------------------------------------------------------------------------------------------------
+VIII) Listing Directory
+
+# 1. List all files and sub-directories using Files.list().
+     Files.list() method to list all file names and sub-directories in current directory.
+
+        Files.list(Paths.get("./src/main/java/neo/spring5/javaFeatures/java8"))
+                .forEach(System.out::println);
+
+# 2. List only files inside directory using filter expression.
+     You can use filters to filter out sub-directories and print only file names, if you need it.
+
+        Files.list(Paths.get("./src/main/java"))
+                .filter(Files::isRegularFile)
+                .forEach(System.out::println);
+
+# 3. List files and sub-directories with Files.newDirectoryStream()
+     Java provides a more flexible way of traversing a directory content using Files.newDirectoryStream().
+     If we’re working with a large directory, then using DirectoryStream actually make code faster.
+
+        Files.newDirectoryStream(Paths.get("."))
+                .forEach(System.out::println);
+
+# 4. List only files with Files.newDirectoryStream()
+     To list out only files and excluding all directories from stream, use path filter as second argument.
+
+        Files.newDirectoryStream(Paths.get("."), path -> path.toFile().isFile())
+                .forEach(System.out::println);
+
+# 5. List files of certain extention with Files.newDirectoryStream()
+     You can change the path filter expression passed in second argument to get files of certain extension only.
+
+        Files.newDirectoryStream(Paths.get("./src/main/java/neo/spring5/javaFeatures/java8"),
+               path -> path.toString().endsWith(".java"))
+                .forEach(System.out::println);
+
+# 6. Find all hidden files in directory
+     To find all hidden files, you can use filter expression file -> file.isHidden() in any of above example.
+
+        final File[] files = new File(".").listFiles(file -> file.isHidden());
+        //or
+        final​ ​File​​[]​ files = ​new​ ​File​(​"."​).listFiles(​File​::isHidden);
+
+-------------------------------------------------------------------------------------------------
+IX) LocalDateTime
+
+# The LocalDate class represents a date, there is no representation of a time or time-zone.
+
+    LocalDate localDate = LocalDate.now();
+    System.out.println(localDate.toString());                //2019-12-10
+    System.out.println(localDate.getDayOfWeek().toString()); //TUESDAY
+    System.out.println(localDate.getDayOfMonth());           //10
+    System.out.println(localDate.getDayOfYear());            //344
+    System.out.println(localDate.isLeapYear());              //false
+    System.out.println(localDate.plusDays(12).toString());   //2019-12-22
+
+# The LocalTime class represents a time, there is no representation of a date or time-zone.
+
+    LocalTime localTime1 = LocalTime.now();
+    System.out.println(localTime1.toString());  //toString() in format 09:57:59.744
+    LocalTime localTime = LocalTime.of(12, 20);
+    System.out.println(localTime.toString());    //12:20
+    System.out.println(localTime.getHour());     //12
+    System.out.println(localTime.getMinute());   //20
+    System.out.println(localTime.getSecond());   //0
+    System.out.println(localTime.MIDNIGHT);      //00:00
+    System.out.println(localTime.NOON);          //12:00
+
+# LocalDateTime:
+  The LocalDateTime class represents a date-time, there is no representation of a time-zone.
+
+    LocalDateTime localDateTime = LocalDateTime.now();
+    System.out.println(localDateTime.toString());      //2019-12-10T13:05:50.109977
+    System.out.println(localDateTime.getDayOfMonth()); //10
+    System.out.println(localDateTime.getHour());       //13
+    System.out.println(localDateTime.getNano());       //109977000
+
+# If you want to use the date functionality with zone information,
+  then Lambda provide you extra 3 classes similar to above one i.e. OffsetDate, OffsetTime and OffsetDateTime.
+  Timezone offset can be represented in “+05:30” or “Europe/Paris” formats.
+  This is done via using another class i.e. ZoneId.
+
+    OffsetDateTime offsetDateTime = OffsetDateTime.now();
+    System.out.println(offsetDateTime.toString());              //2019-12-10T13:05:50.110808+05:30
+
+    offsetDateTime = OffsetDateTime.now(ZoneId.of("+05:30"));
+    System.out.println(offsetDateTime.toString());              //2019-12-10T13:05:50.110930+05:30
+
+    offsetDateTime = OffsetDateTime.now(ZoneId.of("-06:30"));
+    System.out.println(offsetDateTime.toString());              //2019-12-10T01:05:50.111041-06:30
+
+    ZonedDateTime zonedDateTime =
+            ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+    System.out.println(zonedDateTime.toString());               //2019-12-10T08:35:50.112349+01:00[Europe/Paris]
+
+# Instant Class:
+  For representing the specific timestamp ant any moment, the class needs to be used is Instant.
+  The Instant class represents an instant in time to an accuracy of nanoseconds.
+  Operations on an Instant include comparison to another Instant and adding or subtracting a duration.
+
+    Instant instant = Instant.now();
+    System.out.println(instant.toString());
+    System.out.println(instant.plus(Duration.ofMillis(5000)).toString());
+    System.out.println(instant.minus(Duration.ofMillis(5000)).toString());
+    System.out.println(instant.minusSeconds(10).toString());
+
+# Duration Class:
+  Duration class is a whole new concept brought first time in java language.
+  It represents the time difference between two time stamps.
+  Duration deals with small unit of time such as milliseconds, seconds, minutes and hour.
+  They are more suitable for interacting with application code.
+
+    Duration duration = Duration.ofMillis(5000);
+    System.out.println(duration.toString());     //PT5S (Period Time -> PT)
+
+    duration = Duration.ofSeconds(60);
+    System.out.println(duration.toString());     //PT1M
+
+    duration = Duration.ofMinutes(10);
+    System.out.println(duration.toString());     //PT10M
+
+    duration = Duration.ofHours(2);
+    System.out.println(duration.toString());     //PT2H
+
+    duration = Duration.between(Instant.now(), Instant.now().plus(Duration.ofMinutes(10)));
+    System.out.println(duration.toString());  //PT10M
+
+# Period:
+  To interact with human, you need to get bigger durations which are presented with Period class.
+
+    Period period = Period.ofDays(6);
+    System.out.println(period.toString());    //P6D
+
+    period = Period.ofMonths(6);
+    System.out.println(period.toString());    //P6M
+
+    period = Period.between(LocalDate.now(), LocalDate.now().plusDays(60));
+    System.out.println(period.toString());   //P1M29D
+
+
+# Date Formatting:
+  Date formatting is supported via two classes mainly i.e. DateTimeFormatterBuilder and DateTimeFormatter.
+  DateTimeFormatterBuilder works on builder pattern to build custom patterns,
+  where as DateTimeFormatter provides necessary input in doing so.
+
+    DateTimeFormatterBuilder formatterBuilder = new DateTimeFormatterBuilder();
+    formatterBuilder.append(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                    .appendLiteral("-")
+                    .appendZoneOrOffsetId();
+    DateTimeFormatter formatter = formatterBuilder.toFormatter();
+    System.out.println(formatter.format(ZonedDateTime.now()));
+
+-------------------------------------------------------------------------------------------------
+X) StringJoin:
+
+# 1. Join String Array – Java 8 String.join()
+     String.join() method has two overloaded forms.
+     Join multiple string arguments
+     This method takes all strings in var-args format and all strings are passed as argument in the method.
+     The return string is received by appending all strings delimited by argument separator. */
+
+     String joinedString = String.join(", ", "How", "To", "Do", "In", "Java");
+     This method can be used to join multiple strings which are not yet in form of collection or array.
+     System.out.println(joinedString);
+
+     # Joining list of Strings
+       List<String> stringList = Arrays.asList("Welcome", "To", "Java 8", "Features.");
+       String joinedString1 = String.join(", ", stringList);
+       System.out.println(joinedString1);
+
+# 2. Joining String using formatted
+     StringJoiner joiner = new StringJoiner(", ", "[", "]");
+             joiner.add("How")
+                   .add("To")
+                   .add("Do")
+                   .add("In")
+                   .add("Java");
+           System.out.println(joiner);
+
+# 3. String list of string with Collectors.joining()
+     While using Java 8 lambda, we can use Collectors.joining() to convert list to String.
+
+     List<String> numbers = Arrays.asList("How", "To", "Do", "In", "Java");
+        String joinedString2 = numbers
+                   .stream()
+                   .collect(Collectors.joining(", ","[","]"));
+
+           System.out.println(joinedString2);
+
+# 4. Join String Array using StringUtils.join()
+           String[] strArray = { "How", "To", "Do", "In", "Java" };
+
+           String joinedString3 = StringUtils.join(strArray);
+           System.out.println(joinedString3);
+
+-------------------------------------------------------------------------------------------------
+XI) File Handling
+
+# 1. Java 8 read file – line by line
+     This program output will print the content of the file in the console line by line.
+
+        Path filePath = Paths.get(".", "java-8-Features.txt");
+        try(Stream<String> lines =  Files.lines(filePath)){
+            lines.forEach(System.out::println);
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+
+# 2. Java 8 read file – filtering stream of lines
+     we will read the file content as stream of lines as. Then we will filter all lines which have the word "stream" in it
+
+        Path filePath1 = Paths.get(".", "java-8-Features.txt");
+        try(Stream<String> lines =  Files.lines(filePath1)){
+            List<String> filteredLines = lines
+                    .filter(s -> s.contains("Stream"))
+                    .collect(Collectors.toList());
+            filteredLines.forEach(System.out::println);
+
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+
+# 3. Java 8 write to file using BufferedWriter
+     BufferedWriter is used to write text to a character or byte stream. Before printing the characters,
+     it stores the characters in buffer and print in bunches. Without buffering,
+     each invocation of a print() method would cause characters to be converted into bytes that would then,
+     be written immediately to the file, which can be very inefficient.
+
+        Path path = Paths.get(".", "writefile.txt");
+
+        //Use try-with-resource to get auto-closeable writer instance
+        try (BufferedWriter writer = Files.newBufferedWriter(path))
+        {
+            writer.write("Overwrite File. !!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+# 2. Write to file using Files.write()
+     Using Files.write() method:
+
+        String content = "Changes Overwrite !!";
+        Files.write(Paths.get(".", "writefile.txt"), content.getBytes());
+
+-------------------------------------------------------------------------------------------------
+XII) Base64
+
+# Base 64 encoding convert your binary data into 64 printable ASCII characters.
+  Generally it is done for binary data in email messages and "basic" HTTP authentication.
+  These 64 printable characters are:
+  -> 26 uppercase letters [A…Z]
+  -> 26 lowercase letters [a…z]
+  -> 10 digits [0…9]
+  -> 2 symbols [Read more]
+  The encoded string with above characters is safe to be transferred over network supporting text data without,
+  fear of losing data in confusion of control characters.
+
+# 1. Encoding a string to base 64
+
+     Base64.Encoder encoder = Base64.getEncoder();
+     String normalString = "username:password";
+     String encodedString = encoder.encodeToString(normalString.getBytes(StandardCharsets.UTF_8));
+     System.out.println(encodedString);
+
+# 2. Decoding a base 64 encoded string
+     Just get the instance of Base64.Decoder and use it to decode the base 64 encoded string.
+
+     Base64.Decoder decoder = Base64.getDecoder();
+     byte[] decodedByteArray = decoder.decode(encodedString);
+     System.out.println(new String(decodedByteArray));
+
+# 3. Wrap to a base 64 encoded output stream
+     If you don’t want to directly work with data and rather prefer to work with streams,
+     you can wrap the output stream such that all data written to this output stream,
+     will be automatically base 64 encoded.
+
+        Path sourcePath = Paths.get(".", "writefile.txt");
+        Path targetPath = Paths.get(".", "encoded.txt");
+        Base64.Encoder mimeEncoder = Base64.getMimeEncoder();
+        try(OutputStream output = Files.newOutputStream(targetPath)){
+            //Copy the encoded file content to target file
+            Files.copy(sourcePath, mimeEncoder.wrap(output));
+            //Or simply use the encoded output stream
+            OutputStream encodedStream = mimeEncoder.wrap(output);
+        }
+
+-------------------------------------------------------------------------------------------------

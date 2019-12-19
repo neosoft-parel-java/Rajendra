@@ -2,9 +2,11 @@ package neo.demo.springboot.nrc.services;
 
 import neo.demo.springboot.nrc.model.User;
 import neo.demo.springboot.nrc.repositories.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;

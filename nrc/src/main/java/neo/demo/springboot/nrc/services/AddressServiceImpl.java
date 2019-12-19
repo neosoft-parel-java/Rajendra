@@ -2,9 +2,11 @@ package neo.demo.springboot.nrc.services;
 
 import neo.demo.springboot.nrc.model.Address;
 import neo.demo.springboot.nrc.repositories.AddressRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;

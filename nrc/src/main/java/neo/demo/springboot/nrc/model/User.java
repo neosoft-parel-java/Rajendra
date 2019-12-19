@@ -28,12 +28,12 @@ public class User {
     @OneToMany
     private List<User> siblings;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserSpouse> spouses;
 
     @OneToMany
     private List<User> children;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserAddress> addressList;
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@RequestMapping("/api/address")
+@RequestMapping("/api/v1/address")
 @RestController
 public class AddressController {
 
@@ -26,21 +26,21 @@ public class AddressController {
     }
 
     @PostMapping
-    public ResponseEntity saveNewAddress(@Valid @RequestBody Address address){
+    public ResponseEntity<Address> saveNewAddress(@Valid @RequestBody Address address){
         Address address1 = addressService.save(address);
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Location", "/api/address/" + address1.getId());
-        return new ResponseEntity(httpHeaders, HttpStatus.CREATED);
+        httpHeaders.add("Location", "/api/v1/address/" + address1.getId());
+        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
     }
 
     @PutMapping("/{addressId}")
-    public ResponseEntity updateAddress(@PathVariable("addressId") Long id,
+    public ResponseEntity<Address> updateAddress(@PathVariable("addressId") Long id,
                                      @Valid @RequestBody Address address){
         Address address1 = addressService.findById(id);
         address1.setArea(address.getArea());
         address1.setCity(address.getCity());
         addressService.save(address1);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{addressId}")

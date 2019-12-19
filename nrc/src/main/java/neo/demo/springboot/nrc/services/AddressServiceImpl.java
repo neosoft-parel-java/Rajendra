@@ -22,7 +22,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address findById(Long id) {
-        return addressRepository.findById(id).get();
+        return addressRepository.findById(id).orElse(null);
     }
 
     @Override

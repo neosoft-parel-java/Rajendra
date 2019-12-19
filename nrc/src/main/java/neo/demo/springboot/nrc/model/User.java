@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -26,14 +27,14 @@ public class User {
     private User father;
 
     @OneToMany
-    private List<User> siblings;
+    private Set<User> siblings;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserSpouse> spouses;
+    private Set<UserSpouse> spouses;
 
     @OneToMany
-    private List<User> children;
+    private Set<User> children;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<UserAddress> addressList;
+    private Set<UserAddress> addressList;
 }

@@ -1,5 +1,6 @@
 package neo.demo.springboot.nrc.controllers;
 
+import neo.demo.springboot.nrc.dto.UserDto;
 import neo.demo.springboot.nrc.model.User;
 import neo.demo.springboot.nrc.services.UserService;
 import org.springframework.http.HttpHeaders;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
@@ -23,10 +25,10 @@ public class UserController {
         return userService.findAll();
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable("userId") Long id){
-        return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
-    }
+//    @GetMapping("/{userId}")
+//    public ResponseEntity<User> getUser(@PathVariable("userId") Long id){
+//        return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
+//    }
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User newUser){
@@ -47,10 +49,8 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{userId}")
-    public void deleteUser(@PathVariable("userId") Long id){
-        userService.deleteById(id);
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getUserInfo(@PathVariable("userId") Long id){
+        return new ResponseEntity<>(userService.getUserInfo(id), HttpStatus.OK);
     }
-
-
 }
